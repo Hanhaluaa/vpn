@@ -1,0 +1,41 @@
+import requests
+
+class XUI:
+
+    def __init__(self, username: str, password: str) :
+        self.session_id = None
+        self.username = username
+        self.password = password
+        self.host = "http://159.255.38.36:2053/"
+
+        # call login endpoint here
+        # self.session_id = request.POST(url, login, password)
+    def login(self):
+        url = f"{self.host}/login" # беру с примера http://localhost:2053/login, не уверен на счета порта 2053 хз хз
+        #корретный путь - http://159.255.38.36:63679/GAxCevIDgYcJH0W/login
+        # доступен только curl http://159.255.38.36:63679/GAxCevIDgYcJH0W/panel - остальное недоступно
+
+        user_data = {"username": self.username, "password": self.password}
+        try:
+            response = requests.post(url, json=user_data)
+            response.raise_for_status() #хз на счет этой проверки надо ли..
+            self.session_id = response.cookies.get('session')
+            if not self.session_id:
+                raise ValueError('не получилось получить session ID')
+            print(f"Успешныый вход. Session ID: {self.session_id}")
+            return self.session_id
+        except:
+            print("ошибка авторизации")
+
+
+
+    #на это уже не хватило времени :(
+    # def check_subscription(self, user_id: str):
+    #     """Получение информации о подписки"""
+    #     # тут будет вызов API 3x с проверкой подписки и сохранения инфы в класс подписки
+    #     return Subscription(True, "test")
+    #
+    # def add_trial(self, user_id: str):
+    #     """Добавление пробных дней пользователю"""
+    #     # тут будет вызов API 3x для добавление трёх пробных дней к подписке
+    #     return "test"
